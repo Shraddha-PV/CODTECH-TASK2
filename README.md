@@ -8,7 +8,7 @@ Mentor : Santhosh
 
 Overview of the Project :
 
-Project : Custpmer Analysis and Segmentation
+Project : Customer Analysis and Segmentation
 
 Objective :
 
