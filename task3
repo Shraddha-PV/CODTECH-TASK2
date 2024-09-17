@@ -1,0 +1,97 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
+from google.colab import files
+uploaded = files.upload()
+
+import io
+
+# Get the actual filename after upload
+filename = list(uploaded.keys())[0]
+
+# Load the dataset
+data = pd.read_csv(io.BytesIO(uploaded[filename]))
+data.head()
+
+# Check for missing values
+data.isnull().sum()
+
+# Drop missing values if any
+data.dropna(inplace=True)
+
+# Check for duplicates
+data.duplicated().sum()
+
+# Drop duplicates if any
+data.drop_duplicates(inplace=True)
+
+# Select relevant features
+features = data[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']]
+features.head()
+
+# Age distribution
+sns.histplot(data['Age'], kde=True)
+plt.title('Age Distribution')
+plt.show()
+
+# Annual Income distribution
+sns.histplot(data['Annual Income (k$)'], kde=True)
+plt.title('Annual Income Distribution')
+plt.show()
+
+# Spending Score distribution
+sns.histplot(data['Spending Score (1-100)'], kde=True)
+plt.title('Spending Score Distribution')
+plt.show()
+
+# Correlation heatmap
+sns.heatmap(features.corr(), annot=True, cmap='coolwarm')
+plt.title('Feature Correlation')
+plt.show()
+
+inertia = []
+for n in range(1, 11):
+    kmeans = KMeans(n_clusters=n)
+    kmeans.fit(scaled_features)
+    inertia.append(kmeans.inertia_)
+
+plt.plot(range(1, 11), inertia)
+plt.xlabel('Number of Clusters')
+plt.ylabel('Inertia')
+plt.title('Elbow Method')
+plt.show()
+
+kmeans = KMeans(n_clusters=4)
+data['Cluster'] = kmeans.fit_predict(scaled_features)
+
+sns.scatterplot(x='Annual Income (k$)', y='Spending Score (1-100)', hue='Cluster', data=data, palette='Set1')
+plt.title('Customer Segments')
+plt.show()
+
+# Display cluster centroids
+centroids = pd.DataFrame(scaler.inverse_transform(kmeans.cluster_centers_), columns=features.columns)
+centroids['Cluster'] = centroids.index
+centroids
+
+# Count the number of customers in each cluster
+cluster_counts = data['Cluster'].value_counts()
+
+# Plot the pie chart
+plt.figure(figsize=(7, 7))
+plt.pie(cluster_counts, labels=cluster_counts.index, autopct='%1.1f%%', startangle=140, colors=sns.color_palette('Set1'))
+plt.title('Customer Segmentation Distribution')
+plt.show()
+
+
+
+
+
+
+
+
+
+
